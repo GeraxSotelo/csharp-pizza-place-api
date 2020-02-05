@@ -18,6 +18,11 @@ namespace csharp_pizza_place_api.Repositories
       string sql = "SELECT * FROM pizzas";
       return _db.Query<Pizza>(sql);
     }
+    internal Pizza GetById(int id)
+    {
+      string sql = "SELECT * FROM pizzas WHERE id = @id";
+      return _db.QueryFirstOrDefault<Pizza>(sql, new { id });
+    }
 
     internal Pizza Create(Pizza newData)
     {
@@ -31,6 +36,24 @@ namespace csharp_pizza_place_api.Repositories
       int id = _db.ExecuteScalar<int>(sql, newData);
       newData.Id = id;
       return newData;
+    }
+
+    internal void Edit(Pizza update)
+    {
+      string sql = @"
+      UPDATE pizzas
+      SET
+      name = @Name,
+      description = @Description,
+      price = @Price
+      WHERE id = @id;";
+      _db.Execute(sql, update);
+    }
+
+    internal void Delete(int id)
+    {
+      string sql = "DELETE FROM pizzas WHERE id = @id";
+      _db.Execute(sql, new { id });
     }
   }
 }
